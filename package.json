@@ -9,7 +9,8 @@
     "eslint": "^6.6.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "styled-components": "^5.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -40,18 +41,16 @@
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.5"
   },
-    "husky": {
+  "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
-    "*.js": 
-    
-    [
+    "*.js": [
       "prettier --config .prettierrc --write",
       "eslint --fix",
-       "git add"
-      ]
+      "git add"
+    ]
   }
 }
