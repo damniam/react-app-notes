@@ -1,10 +1,23 @@
 import React from 'react';
-import SidebarTemplate from 'templates/SidebarTemplate';
+import { connect } from 'react-redux';
+import GridTemplate from 'templates/GridTemplate';
+import Card from 'components/molecules/Card/Card';
 
-const Twitter = () => (
-  <SidebarTemplate pageType="twitter">
-    <h1>Article</h1>
-  </SidebarTemplate>
+const Twitter = ({ twitters }) => (
+  <GridTemplate pageType="twitters">
+    {twitters.map(({ title, content, created, id }) => (
+      <Card
+        cardType="twitters"
+        id={id}
+        title={title}
+        description={content}
+        created={created}
+        key={id}
+      />
+    ))}
+  </GridTemplate>
 );
 
-export default Twitter;
+const mapStateToProp = ({ twitters }) => ({ twitters });
+
+export default connect(mapStateToProp)(Twitter);

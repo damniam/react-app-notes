@@ -1,13 +1,23 @@
 {
   "extends": ["airbnb", "prettier", "prettier/react"],
+  "parser": "babel-eslint",
   "env": {
     "jest": true
   },
   "globals": {
+    "window": true,
     "document": true
   },
   "rules": {
-    "no-extraneous-dependencies": 0,
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true,
+        "optionalDependencies": false,
+        "peerDependencies": false
+      }
+    ],
+    // es
     "react/jsx-filename-extension": [1, { "extensions": [".js"] }]
   },
   "settings": {

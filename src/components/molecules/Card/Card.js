@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
 import Button from 'components/atoms/Button/Button';
 import LinkIcon from 'assets/link.svg';
+import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { removeItem as removeItemAction } from 'action';
 
 // const CARD_TYPE = {
 //   note: 'NOTE',
@@ -50,7 +53,7 @@ const StyledHeading = styled(Heading)`
 const StyledAvater = styled.img`
   width: 86px;
   height: 86px;
-  border: 5px solid ${({ theme }) => theme.twitter};
+  border: 5px solid ${({ theme }) => theme.twitters};
   border-radius: 50px;
   position: absolute;
   right: 25px;
@@ -72,34 +75,54 @@ const StyledLinkButton = styled.a`
   z-index: 2;
 `;
 
-const Card = ({ cardType }) => (
-  <StyledWrapper>
-    <InnerWrapper activeColor={cardType}>
-      <StyledHeading>Hello Damian</StyledHeading>
-      <DateInfo>3 days</DateInfo>
-      {cardType === 'twitter' && (
-        <StyledAvater src="https://api.adorable.io/avatars/140/damiandzialo@adorable.io.png" />
-      )}
-      {cardType === 'article' && <StyledLinkButton href="#" />}
-    </InnerWrapper>
-    <InnerWrapper flex>
-      <Paragraph>
-        Esse aliquip nisi dolore sunt consequat minim voluptate esse enim nulla ex. Ea voluptate non
-        amet deserunt nisi cupidatat reprehenderit exercitation. Adipisicing ut elit cupidatat ea
-        dolor magna consequat consectetur id est minim. Occaecat commodo incididunt adipisicing esse
-        consectetur. Ullamco ut velit veniam eiusmod. Aute non nulla velit aute magna.
-      </Paragraph>
-      <Button secondary>Remove</Button>
-    </InnerWrapper>
-  </StyledWrapper>
-);
+class Card extends Component {
+  state = {
+    redirect: false,
+  };
+
+  handleCardClick = () => this.setState({ redirect: true });
+
+  render() {
+    const { id, cardType, title, created, description, urlAvatar, removeItem } = this.props;
+    const { redirect } = this.state;
+
+    if (redirect) {
+      return <Redirect to={`${cardType}/${id}`} />;
+    }
+    return (
+      <StyledWrapper onClick={this.handleCardClick}>
+        <InnerWrapper activeColor={cardType}>
+          <StyledHeading>{title}</StyledHeading>
+          <DateInfo>{created}</DateInfo>
+          {cardType === 'twitters' && <StyledAvater src={urlAvatar} />}
+          {cardType === 'articles' && <StyledLinkButton href="#" />}
+        </InnerWrapper>
+        <InnerWrapper flex>
+          <Paragraph>{description}</Paragraph>
+          <Button secondary onClick={() => removeItem(cardType, id)}>
+            Remove
+          </Button>
+        </InnerWrapper>
+      </StyledWrapper>
+    );
+  }
+}
 
 Card.propTypes = {
-  cardType: PropTypes.oneOf(['note', 'twitter', 'article']),
+  cardType: PropTypes.oneOf(['notes', 'twitters', 'articles']),
+  title: PropTypes.string.isRequired,
+  created: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  removeItem: PropTypes.func.isRequired,
 };
 
 Card.defaultProps = {
-  cardType: 'note',
+  urlAvatar: 'https://api.adorable.io/avatars/140/damiandzialo@adorable.io.png',
+  cardType: 'notes',
 };
 
-export default Card;
+const mapDispatchToProps = (dispatch) => ({
+  removeItem: (itemType, id) => dispatch(removeItemAction(itemType, id)),
+});
+
+export default connect(null, mapDispatchToProps)(Card);
